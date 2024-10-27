@@ -1,11 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 import { Groq } from "groq-sdk";
+
+export const maxDuration = 299;
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     if (!imageUrl) {
       return NextResponse.json(
-        { error: 'Image URL is required' },
+        { error: "Image URL is required" },
         { status: 400 }
       );
     }

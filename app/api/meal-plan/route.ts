@@ -1,7 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { generateObject } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { z } from "zod";
+
+export const maxDuration = 299;
 
 const mealPlanSchema = z.object({
   weeklyPlan: z.object({
@@ -68,10 +70,15 @@ const mealPlanSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const { dietaryPreferences, calorieTarget, cuisinePreference, customInstructions } = await req.json();
+    const {
+      dietaryPreferences,
+      calorieTarget,
+      cuisinePreference,
+      customInstructions,
+    } = await req.json();
 
     const result = await generateObject({
-      model: openai('gpt-4o-mini'),
+      model: openai("gpt-4o-mini"),
       schema: mealPlanSchema,
       prompt: `Generate a weekly meal plan with the following requirements:
         - Dietary preferences: ${dietaryPreferences}
@@ -81,7 +88,11 @@ export async function POST(req: NextRequest) {
         - Include detailed ingredients and macronutrient breakdown
         - Ensure meals align with ${cuisinePreference} cuisine traditions and ingredients
         - Use authentic ${cuisinePreference} recipes and cooking methods
-        ${customInstructions ? `\nAdditional requirements:\n${customInstructions}` : ''}`,
+        ${
+          customInstructions
+            ? `\nAdditional requirements:\n${customInstructions}`
+            : ""
+        }`,
     });
 
     return NextResponse.json({

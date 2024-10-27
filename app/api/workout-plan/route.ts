@@ -1,7 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { generateObject } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { z } from "zod";
+
+export const maxDuration = 299;
 
 const workoutPlanSchema = z.object({
   weeklyPlan: z.object({
@@ -30,7 +32,7 @@ export async function POST(req: NextRequest) {
     const { fitnessLevel, goals, preferences } = await req.json();
 
     const result = await generateObject({
-      model: openai('gpt-4o-mini'),
+      model: openai("gpt-4o-mini"),
       schema: workoutPlanSchema,
       prompt: `Generate a weekly workout plan with the following requirements:
         - Fitness Level: ${fitnessLevel}
@@ -41,7 +43,7 @@ export async function POST(req: NextRequest) {
         - Include appropriate rest days
         - Consider progressive overload principles
         - Add relevant emojis for each day's focus
-        ${preferences ? `\nAdditional preferences:\n${preferences}` : ''}`,
+        ${preferences ? `\nAdditional preferences:\n${preferences}` : ""}`,
     });
 
     return NextResponse.json({
